@@ -77,7 +77,10 @@ def display_message(line1, line2=""):
 # Fungsi cek koneksi internet
 def check_internet_connection():
     try:
-        requests.get("https://www.telemetry-adaro.id", timeout=5)
+        headers = {
+            "Accept": "application/json"  # Added Accept header
+        }
+        requests.get("https://www.telemetry-adaro.id", headers=headers, timeout=5)
         return True
     except (requests.ConnectionError, requests.Timeout):
         return False
@@ -90,8 +93,12 @@ def get_access_token():
         print("Internet terputus. Menunggu koneksi...")
         return None
 
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",  # Added Accept header
+    }
     payload = {"username": USERNAME, "password": PASSWORD}
-    response = requests.post(LOGIN_URL, json=payload, verify=False)
+    response = requests.post(LOGIN_URL, json=payload, headers=headers, verify=False)
     if response.status_code == 200:
         return response.json().get("access_token")
     print("Login failed:", response.text)
