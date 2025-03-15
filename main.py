@@ -1,3 +1,6 @@
+import Adafruit_GPIO.Platform as Platform
+
+Platform.platform_detect = lambda: Platform.RASPBERRY_PI
 import requests
 import serial
 import time
@@ -280,4 +283,3 @@ while True:
     print("Menunggu SMS baru...")
     display_message("Menunggu SMS baru...")
     time.sleep(7)
-
