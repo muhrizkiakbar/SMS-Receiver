@@ -111,8 +111,8 @@ def read_sms():
     time.sleep(1)
     ser.write(b"AT+CMGF=1\r")
     time.sleep(1)
-    # ser.write(b'AT+CMGL="REC UNREAD"\r')
-    # time.sleep(2)
+    ser.write(b'AT+CMGL="REC UNREAD"\r')
+    time.sleep(2)
     response = ser.read(ser.inWaiting()).decode(errors="ignore")
     ser.close()
     return response
