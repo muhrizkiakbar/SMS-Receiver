@@ -21,8 +21,8 @@ font = ImageFont.truetype(font_path, 11)  # Ukuran font 16px
 # Konfigurasi
 LOGIN_URL = "https://www.telemetry-adaro.id/api/login"
 TELEMETRY_URL = "https://www.telemetry-adaro.id/api/telemetry"
-USERNAME = "test"
-PASSWORD = "diskominfo"
+USERNAME = "sms_adaro"
+PASSWORD = "smk_adaro"
 PORT = "/dev/ttyUSB0"  # Sesuaikan dengan port modem Anda
 BAUDRATE = 115200
 SMS_LIMIT = 27
