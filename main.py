@@ -141,7 +141,7 @@ def save_sms_to_file(phone_number, message):
 
 
 # Fungsi untuk ekstraksi data sensor
-def extract_sensor_data(message):
+def extract_sensor_data(message, is_climatology):
     data = {
         "ph": 0.0,
         "tds": 0,
@@ -149,22 +149,48 @@ def extract_sensor_data(message):
         "velocity": 0,
         "rainfall": 0,
         "water_height": 0,
+        "temperature": 0,
+        "humidity": 0,
+        "wind_direction": 0,
+        "wind_speed": 0,
+        "solar_radiation": 0,
+        "evaporation": 0,
     }
-    ain_values = re.findall(r"AIN(\d+):([\d.]+)", message)
-    for sensor, value in ain_values:
+    ain_values = re.findall(r"ain(\d+):([\d.]+)", message)
+    if is_climatology:
+        for sensor, value in ain_values:
+            sensor = int(sensor)
+            value = float(value)
+            if sensor == 0:
+                data["temperature"] = value
+            elif sensor == 1:
+                data["humidity"] = value
+            elif sensor == 2:
+                data["wind_direction"] = value
+            elif sensor == 3:
+                data["wind_speed"] = value
+            elif sensor == 4:
+                data["solar_radiation"] = value
+            elif sensor == 5:
+                data["evaporation"] = value
+    else:
+        for sensor, value in ain_values:
+            sensor = int(sensor)
+            value = float(value)
+            if sensor == 0:
+                data["water_height"] = value
+            elif sensor == 1:
+                data["ph"] = value
+            elif sensor == 2:
+                data["tss"] = value
+            elif sensor == 3:
+                data["tds"] = value
+
+    din_values = re.findall(r"din(\d+):([\d.]+)", message)
+    for sensor, value in din_values:
         sensor = int(sensor)
         value = float(value)
         if sensor == 0:
-            data["water_height"] = value
-        elif sensor == 1:
-            data["ph"] = value
-        elif sensor == 2:
-            data["tss"] = value
-        elif sensor == 3:
-            data["tds"] = value
-        elif sensor == 4:
-            data["velocity"] = value
-        elif sensor == 5:
             data["rainfall"] = value
     return data
 
@@ -239,7 +265,11 @@ def process_stored_sms(token):
                 phone_number = (
                     f"+{parts[1].split('.')[0]}"  # Ambil hanya nomor sebelum ".txt"
                 )
-                sensor_data = extract_sensor_data(message)
+                if phone_number == "+628115113495":
+                    sensor_data = extract_sensor_data(message, True)
+                else:
+                    sensor_data = extract_sensor_data(message, False)
+
                 send_telemetry(
                     token, phone_number, sensor_data, filepath, formatted_timestamp
                 )
@@ -265,7 +295,11 @@ while True:
         parsed_sms = parse_sms(sms_data)
 
         for sms in parsed_sms:
-            sensor_data = extract_sensor_data(sms["message"])
+            if sms["phone_number"] == "+628115113495":
+                sensor_data = extract_sensor_data(sms["message"], True)
+            else:
+                sensor_data = extract_sensor_data(sms["message"], False)
+
             filename = save_sms_to_file(sms["phone_number"], sms["message"])
             send_telemetry(
                 token,
