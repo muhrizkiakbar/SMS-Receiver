@@ -160,7 +160,7 @@ def extract_sensor_data(message, is_climatology):
     print(is_climatology)
     print(ain_values)
 
-    if is_climatology == True:
+    if is_climatology:
         for sensor, value in ain_values:
             sensor = int(sensor)
             value = float(value)
