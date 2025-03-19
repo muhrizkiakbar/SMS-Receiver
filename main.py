@@ -158,6 +158,7 @@ def extract_sensor_data(message, is_climatology):
     }
     ain_values = re.findall(r"ain(\d+):([\d.]+)", message)
     print(is_climatology)
+    print(ain_values)
 
     if is_climatology == True:
         for sensor, value in ain_values:
