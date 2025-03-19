@@ -2,4 +2,7 @@ Adafruit-GPIO
 requests
 serial
 Adafruit-SSD1306
-PIL
+Pillow
+pyserial
+urllib3
+textwrap3
