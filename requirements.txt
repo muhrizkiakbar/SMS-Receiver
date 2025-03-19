@@ -6,3 +6,4 @@ Pillow
 pyserial
 urllib3
 textwrap3
+RPi.GPIO

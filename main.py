@@ -192,6 +192,7 @@ def extract_sensor_data(message, is_climatology):
         value = float(value)
         if sensor == 0:
             data["rainfall"] = value
+
     return data
 
 
@@ -266,8 +267,10 @@ def process_stored_sms(token):
                     f"+{parts[1].split('.')[0]}"  # Ambil hanya nomor sebelum ".txt"
                 )
                 if phone_number == "+628115013798":
+                    print(message)
                     sensor_data = extract_sensor_data(message, True)
                 else:
+                    print(message)
                     sensor_data = extract_sensor_data(message, False)
 
                 send_telemetry(
@@ -296,8 +299,10 @@ while True:
 
         for sms in parsed_sms:
             if sms["phone_number"] == "+628115013798":
+                print(sms["message"])
                 sensor_data = extract_sensor_data(sms["message"], True)
             else:
+                print(sms["message"])
                 sensor_data = extract_sensor_data(sms["message"], False)
 
             filename = save_sms_to_file(sms["phone_number"], sms["message"])
