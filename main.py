@@ -156,7 +156,7 @@ def extract_sensor_data(message, is_climatology):
         "solar_radiation": 0,
         "evaporation": 0,
     }
-    ain_values = re.findall(r"ain(\d+):([\d.]+)", message)
+    ain_values = re.findall(r"AIN(\d+):([\d.]+)", message)
     print(is_climatology)
     print(ain_values)
 
@@ -189,7 +189,7 @@ def extract_sensor_data(message, is_climatology):
             elif sensor == 3:
                 data["tds"] = value
 
-    din_values = re.findall(r"din(\d+):([\d.]+)", message)
+    din_values = re.findall(r"DIN(\d+):([\d.]+)", message)
     for sensor, value in din_values:
         sensor = int(sensor)
         value = float(value)
