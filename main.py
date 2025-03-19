@@ -265,7 +265,7 @@ def process_stored_sms(token):
                 phone_number = (
                     f"+{parts[1].split('.')[0]}"  # Ambil hanya nomor sebelum ".txt"
                 )
-                if phone_number == "+628115113495":
+                if phone_number == "+628115013798":
                     sensor_data = extract_sensor_data(message, True)
                 else:
                     sensor_data = extract_sensor_data(message, False)
@@ -295,7 +295,7 @@ while True:
         parsed_sms = parse_sms(sms_data)
 
         for sms in parsed_sms:
-            if sms["phone_number"] == "+628115113495":
+            if sms["phone_number"] == "+628115013798":
                 sensor_data = extract_sensor_data(sms["message"], True)
             else:
                 sensor_data = extract_sensor_data(sms["message"], False)
