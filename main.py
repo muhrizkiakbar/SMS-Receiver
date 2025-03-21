@@ -141,7 +141,7 @@ def save_sms_to_file(phone_number, message):
 
 
 # Fungsi untuk ekstraksi data sensor
-def extract_sensor_data(message, is_climatology):
+def extract_sensor_data(message, mode):
     data = {
         "ph": 0.0,
         "tds": 0,
@@ -157,10 +157,8 @@ def extract_sensor_data(message, is_climatology):
         "evaporation": 0,
     }
     ain_values = re.findall(r"AIN(\d+):([\d.]+)", message)
-    print(is_climatology)
-    print(ain_values)
 
-    if is_climatology:
+    if mode == "climatology":
         for sensor, value in ain_values:
             sensor = int(sensor)
             value = float(value)
@@ -176,7 +174,17 @@ def extract_sensor_data(message, is_climatology):
                 data["solar_radiation"] = value
             elif sensor == 5:
                 data["evaporation"] = value
-    else:
+    elif mode == "floating_hd":
+        for sensor, value in ain_values:
+            sensor = int(sensor)
+            value = float(value)
+            if sensor == 0:
+                data["dissolve_oxygen"] = value
+            elif sensor == 1:
+                data["ph"] = value
+            elif sensor == 2:
+                data["tss"] = value
+    elif mode == "spas":
         for sensor, value in ain_values:
             sensor = int(sensor)
             value = float(value)
@@ -272,10 +280,14 @@ def process_stored_sms(token):
                 if phone_number == "+628115013798":
                     # if phone_number == "+6281257634242":
                     print(message)
-                    sensor_data = extract_sensor_data(message, True)
+                    sensor_data = extract_sensor_data(message, "climatology")
+                elif phone_number == "+628115113495":
+                    # if phone_number == "+6281257634242":
+                    print(message)
+                    sensor_data = extract_sensor_data(message, "floating_hd")
                 else:
                     print(message)
-                    sensor_data = extract_sensor_data(message, False)
+                    sensor_data = extract_sensor_data(message, "spas")
 
                 send_telemetry(
                     token, phone_number, sensor_data, filepath, formatted_timestamp
@@ -303,12 +315,14 @@ while True:
 
         for sms in parsed_sms:
             if sms["phone_number"] == "+628115013798":
-                # if sms["phone_number"] == "+6281257634242":
                 print(sms["message"])
-                sensor_data = extract_sensor_data(sms["message"], True)
+                sensor_data = extract_sensor_data(sms["message"], "climatology")
+            elif sms["phone_number"] == "+628115113495":
+                print(sms["message"])
+                sensor_data = extract_sensor_data(sms["message"], "floating_hd")
             else:
                 print(sms["message"])
-                sensor_data = extract_sensor_data(sms["message"], False)
+                sensor_data = extract_sensor_data(sms["message"], "spas")
 
             filename = save_sms_to_file(sms["phone_number"], sms["message"])
             send_telemetry(
