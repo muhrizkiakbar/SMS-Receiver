@@ -146,7 +146,7 @@ def extract_sensor_data(message, mode):
         "ph": 0.0,
         "tds": 0,
         "tss": 0,
-        "velocity": 0,
+        "debit": 0,
         "rainfall": 0,
         "water_height": 0,
         "temperature": 0,
