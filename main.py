@@ -342,6 +342,7 @@ while True:
         sms_count = sms_response.count("+CMGL:")
         ser.close()
 
+        print(f"Banyak sms: {sms_count}")
         if sms_count >= SMS_LIMIT:
             delete_all_sms()
 
