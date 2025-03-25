@@ -135,28 +135,45 @@ def initialize_modem(ser):
 
 
 def read_sms():
-    """Read SMS messages from modem"""
+    """Read SMS messages from modem with robust error handling"""
     try:
         ser = serial.Serial(PORT, BAUDRATE, timeout=5)
-        initialize_modem(ser)
 
-        commands = [b'AT+CMGL="REC UNREAD"\r', b"AT+CMGL=0\r", b'AT+CMGL="ALL"\r']
+        # Initialize modem
+        ser.write(b"AT\r")
+        time.sleep(1)
+        ser.write(b"AT+CMGF=1\r")  # Set to text mode
+        time.sleep(1)
+
+        # Try different SMS reading commands
+        commands = [
+            b'AT+CMGL="REC UNREAD"\r',  # Read unread messages
+            b'AT+CMGL="ALL"\r',  # Read all messages
+            b"AT+CMGL\r",  # Alternative command
+        ]
 
         for cmd in commands:
             ser.write(cmd)
             time.sleep(3)
             response = ser.read(ser.inWaiting()).decode(errors="ignore")
-            logging.info(f"SMS Reading Command Response: {cmd}")
+
+            logging.info(f"SMS Reading Command: {cmd}")
             logging.info(f"Response: {response}")
 
+            # Check if response contains SMS messages
             if "+CMGL:" in response:
                 ser.close()
                 return response
 
         ser.close()
+        logging.warning("No SMS messages found")
         return ""
+
     except serial.SerialException as e:
         logging.error(f"Serial Communication Error: {e}")
+        return ""
+    except Exception as e:
+        logging.error(f"Unexpected SMS reading error: {e}")
         return ""
 
 
