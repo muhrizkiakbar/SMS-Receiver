@@ -110,9 +110,9 @@ def read_sms():
     ser = serial.Serial(PORT, BAUDRATE, timeout=3)
     time.sleep(1)
     ser.write(b"AT+CMGF=1\r")
-    time.sleep(1)
+    time.sleep(3)
     ser.write(b'AT+CMGL="REC UNREAD"\r')
-    time.sleep(2)
+    time.sleep(6)
     response = ser.read(ser.inWaiting()).decode(errors="ignore")
     ser.close()
     return response
@@ -335,9 +335,9 @@ while True:
 
         # **3. Cek jumlah SMS di modem**
         ser = serial.Serial(PORT, BAUDRATE, timeout=3)
-        time.sleep(1)
-        ser.write(b'AT+CMGL="ALL"\r')
         time.sleep(2)
+        ser.write(b'AT+CMGL="ALL"\r')
+        time.sleep(8)
         sms_response = ser.read(ser.inWaiting()).decode(errors="ignore")
         sms_count = sms_response.count("+CMGL:")
         ser.close()
