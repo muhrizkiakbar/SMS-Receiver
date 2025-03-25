@@ -35,7 +35,7 @@ USERNAME = "sms_adaro"
 PASSWORD = "sms_adaro"
 PORT = "/dev/ttyUSB0"  # Adjust according to your modem's port
 BAUDRATE = 115200
-SMS_LIMIT = 27
+SMS_LIMIT = 15
 SMS_STORAGE_PATH = "/home/pi/SMS/sms_storage"
 
 # OLED Configuration
