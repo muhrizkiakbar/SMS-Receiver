@@ -181,19 +181,28 @@ def parse_sms(sms_text):
     """Parse SMS messages with enhanced error handling"""
     sms_list = []
     try:
-        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+        # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)","",\"(?P<timestamp>\d{2}/\d{2}/\d{2},\d{2}:\d{2}:\d{2}\+\d+)\".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
-        logging.info(f"Found Matches: {matches}")
 
         for match in matches:
             phone_number = match.group("phone")
             message = match.group("message").strip()
+            timestamp = match.group("timestamp")
 
             logging.info(f"Parsed SMS - Phone: {phone_number}")
             logging.info(f"Message: {message}")
+            logging.info(f"Timestamp: {timestamp}")
 
             if "AIN" in message:
-                sms_list.append({"phone_number": phone_number, "message": message})
+                sms_list.append(
+                    {
+                        "phone_number": phone_number,
+                        "message": message,
+                        "timestamp": timestamp,
+                    }
+                )
 
     except Exception as e:
         logging.error(f"SMS Parsing Error: {e}")
