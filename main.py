@@ -182,8 +182,7 @@ def parse_sms(sms_text):
     sms_list = []
     try:
         # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
-        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[^"]+)",,"(?P<timestamp>[^"]+)"(?:\s*(?P<message>[^\+]+))?'
-        # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)","",\"(?P<timestamp>\d{2}/\d{2}/\d{2},\d{2}:\d{2}:\d{2}\+\d+)\".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+        sms_pattern = r'\+CMGL: (\d+),"REC UNREAD","(?P<phone>[\+\d]+)",.+?,"(?P<timestamp>[\d/,+]+)"\n(?P<message>[^\n]+)'
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
         for match in matches:
             phone_number = match.group("phone")
@@ -193,15 +192,12 @@ def parse_sms(sms_text):
             logging.info(f"Parsed SMS - Phone: {phone_number}")
             logging.info(f"Message: {message}")
 
-            logging.info("====================")
-            logging.info(f"SMS Text: {match}")
-            logging.info("====================")
-
             if "AIN" in message:
                 sms_list.append(
                     {
                         "phone_number": phone_number,
                         "message": message,
+                        "timestamp": convert_timestamp(timestamp),
                     }
                 )
 
@@ -211,10 +207,13 @@ def parse_sms(sms_text):
     return sms_list
 
 
-def save_sms_to_file(phone_number, message):
+def save_sms_to_file(phone_number, message, timestamp):
     """Save SMS to file with timestamp"""
     try:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        parsed_datetime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+
+        timestamp = parsed_datetime.strftime("%Y%m%d_%H%M%S")
+
         filename = f"{SMS_STORAGE_PATH}/{timestamp}_{phone_number}.txt"
         with open(filename, "w") as file:
             file.write(message)
@@ -362,6 +361,22 @@ def process_stored_sms(token):
         logging.error(f"Stored SMS processing error: {e}")
 
 
+def convert_timestamp(timestamp):
+    """
+    Konversi timestamp dari format '25/03/26,14:01:56+28'
+    ke format '%Y-%m-%d %H:%M:%S'
+    """
+    try:
+        # Parse timestamp
+        # Asumsi: YY/MM/DD,HH:MM:SS+TZ
+        dt = datetime.strptime(timestamp, "%y/%m/%d,%H:%M:%S+%f")
+
+        # Format ulang ke '%Y-%m-%d %H:%M:%S'
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return timestamp  # Kembalikan timestamp asli jika konversi gagal
+
+
 def delete_all_sms():
     """Delete all SMS from modem"""
     try:
@@ -402,7 +417,9 @@ def main():
                     else:
                         sensor_data = extract_sensor_data(sms["message"], "spas")
 
-                    filename = save_sms_to_file(sms["phone_number"], sms["message"])
+                    filename = save_sms_to_file(
+                        sms["phone_number"], sms["message"], sms["timestamp"]
+                    )
 
                     if filename:
                         send_telemetry(
@@ -410,7 +427,7 @@ def main():
                             sms["phone_number"],
                             sensor_data,
                             filename,
-                            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            sms["timestamp"],
                         )
 
                 # Check SMS count
