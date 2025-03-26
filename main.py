@@ -183,8 +183,10 @@ def parse_sms(sms_text):
     try:
         # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
         sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)","",\"(?P<timestamp>\d{2}/\d{2}/\d{2},\d{2}:\d{2}:\d{2}\+\d+)\".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
-
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
+        logging.info("====================")
+        logging.info(f"SMS Text: {message}")
+        logging.info("====================")
 
         for match in matches:
             phone_number = match.group("phone")
