@@ -186,7 +186,6 @@ def parse_sms(sms_text):
 
         # Cari semua kecocokan SMS tidak terbaca
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
-        logging.info(f"Matches: {matches}")
 
         for match in matches:
             phone_number = match.group("phone")
@@ -205,6 +204,8 @@ def parse_sms(sms_text):
                     }
                 )
 
+        if not sms_pattern:
+            logging.info("ISI SMS PATTERN TIDAK")
     except Exception as e:
         logging.error(f"SMS Parsing Error: {e}")
 
