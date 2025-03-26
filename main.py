@@ -35,7 +35,7 @@ USERNAME = "sms_adaro"
 PASSWORD = "sms_adaro"
 PORT = "/dev/ttyUSB0"  # Adjust according to your modem's port
 BAUDRATE = 115200
-SMS_LIMIT = 15
+SMS_LIMIT = 20
 SMS_STORAGE_PATH = "/home/pi/SMS/sms_storage"
 
 # OLED Configuration
@@ -181,8 +181,8 @@ def parse_sms(sms_text):
     """Parse SMS messages with enhanced error handling"""
     sms_list = []
     try:
-        # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
-        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>\+?\d+)",,"(?P<timestamp>[^"]+)"\n(?P<message>.*?)(?=\n\+CMGL|\Z)'
+        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+        # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>\+?\d+)",,"(?P<timestamp>[^"]+)"\n(?P<message>.*?)(?=\n\+CMGL|\Z)'
 
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
 
