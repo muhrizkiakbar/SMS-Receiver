@@ -183,6 +183,7 @@ def parse_sms(sms_text):
     try:
         sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
+        logging.info(f"Found Matches: {matches}")
 
         for match in matches:
             phone_number = match.group("phone")
@@ -431,4 +432,3 @@ if __name__ == "__main__":
         logging.info("Program terminated by user")
     except Exception as e:
         logging.error(f"Unexpected Error: {e}")
-
