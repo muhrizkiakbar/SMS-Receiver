@@ -181,9 +181,7 @@ def parse_sms(sms_text):
     """Parse SMS messages with enhanced error handling"""
     sms_list = []
     try:
-        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>\+?\d+)",,"(?P<timestamp>[\d/,:+]+)"\n(?P<message>.*?)(?=\n\+CMGL:|\Z)'
-
-        # Cari semua kecocokan SMS tidak terbaca
+        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
 
         for match in matches:
