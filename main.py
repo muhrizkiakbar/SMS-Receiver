@@ -193,7 +193,7 @@ def parse_sms(sms_text):
             logging.info(f"Parsed SMS - Phone: {phone_number}")
             logging.info(f"Message: {message}")
 
-            if "AIN" in message:
+            if "AIN" in message or "DIN" in message:
                 sms_list.append({"phone_number": phone_number, "message": message})
 
     except Exception as e:
@@ -231,6 +231,7 @@ def extract_sensor_data(message, mode):
         "wind_speed": 0,
         "solar_radiation": 0,
         "evaporation": 0,
+        "dissolve_oxygen": 0,
     }
 
     ain_values = re.findall(r"AIN(\d+):([\d.]+)", message)
@@ -388,7 +389,7 @@ def main():
                 for sms in parsed_sms_list:
                     if sms["phone_number"] == "+628115013798":
                         sensor_data = extract_sensor_data(sms["message"], "climatology")
-                    elif sms["phone_number"] == "+628115113495":
+                    elif sms["phone_number"] == "+6282195431503":
                         sensor_data = extract_sensor_data(sms["message"], "floating_hd")
                     else:
                         sensor_data = extract_sensor_data(sms["message"], "spas")
@@ -433,4 +434,3 @@ if __name__ == "__main__":
         logging.info("Program terminated by user")
     except Exception as e:
         logging.error(f"Unexpected Error: {e}")
-
