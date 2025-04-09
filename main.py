@@ -341,7 +341,7 @@ def process_stored_sms(token):
 
                 if phone_number == "+628115013798":
                     sensor_data = extract_sensor_data(message, "climatology")
-                elif phone_number == "+628115113495":
+                elif phone_number == "+6282195431503":
                     sensor_data = extract_sensor_data(message, "floating_hd")
                 else:
                     sensor_data = extract_sensor_data(message, "spas")
