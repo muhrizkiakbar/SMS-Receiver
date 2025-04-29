@@ -198,30 +198,29 @@ def parse_sms(sms_text):
     """Parse SMS messages including timestamp"""
     sms_list = []
     try:
-        sms_pattern = (
-            r'\+CMGL: \d+,"REC (?:READ|UNREAD)","(?P<phone>[\+\d]+)",,"(?P<timestamp>[^"]+)"\n'
-            r"(?P<message>.*?)(?=\n\+CMGL|\Z)"
-        )
+        # sms_pattern = (
+        #    r'\+CMGL: \d+,"REC (?:READ|UNREAD)","(?P<phone>[\+\d]+)",,"(?P<timestamp>[^"]+)"\n'
+        #    r"(?P<message>.*?)(?=\n\+CMGL|\Z)"
+        # )
+        sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>[\+\d]+)".*?\n(?P<message>.+?)(?=\n\+CMGL|\Z)'
+        # sms_pattern = r'\+CMGL: \d+,"REC UNREAD","(?P<phone>\+?\d+)",,"(?P<timestamp>[^"]+)"\n(?P<message>.*?)(?=\n\+CMGL|\Z)'
 
         matches = re.finditer(sms_pattern, sms_text, re.DOTALL)
 
         for match in matches:
             phone_number = match.group("phone")
-            timestamp = match.group("timestamp")
             message = match.group("message").strip()
 
             # Konversi timestamp
-            timestamp = convert_timestamp(timestamp)
+            # timestamp = convert_timestamp(timestamp)
 
             logging.info(f"Parsed SMS - Phone: {phone_number}")
-            logging.info(f"Timestamp: {timestamp}")
             logging.info(f"Message: {message}")
 
             if "AIN" in message or "DIN" in message:
                 sms_list.append(
                     {
                         "phone_number": phone_number,
-                        "timestamp": timestamp,
                         "message": message,
                     }
                 )
