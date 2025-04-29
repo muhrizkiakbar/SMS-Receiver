@@ -15,6 +15,8 @@ import urllib3
 import Adafruit_SSD1306
 import textwrap
 from PIL import Image, ImageDraw, ImageFont
+import fcntl
+import sys
 
 # Configure logging
 logging.basicConfig(
@@ -29,6 +31,7 @@ logging.basicConfig(
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configuration Constants
+LOCK_FILE_PATH = "/tmp/sms_gateway.lock"
 LOGIN_URL = "https://www.telemetry-adaro.id/api/login"
 TELEMETRY_URL = "https://www.telemetry-adaro.id/api/telemetry"
 USERNAME = "sms_adaro"
@@ -52,6 +55,16 @@ def initialize_directories():
     """Ensure necessary directories exist"""
     os.makedirs(SMS_STORAGE_PATH, exist_ok=True)
     logging.info(f"Initialized directory: {SMS_STORAGE_PATH}")
+
+
+def enforce_single_instance():
+    global lockfile
+    lockfile = open(LOCK_FILE_PATH, "w")
+    try:
+        fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        logging.error("Another instance is already running. Exiting.")
+        sys.exit(1)
 
 
 def display_message(line1, line2=""):
@@ -402,6 +415,7 @@ def delete_all_sms():
 
 def main():
     """Main program loop"""
+    enforce_single_instance()
     initialize_directories()
 
     while True:
