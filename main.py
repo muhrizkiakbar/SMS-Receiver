@@ -464,13 +464,7 @@ def main():
                         )
 
                 # Check SMS count
-                ser = serial.Serial(PORT, BAUDRATE, timeout=3)
-                ser.write(b'AT+CMGL="ALL"\r')
-                time.sleep(8)
-                sms_response = ser.read(ser.inWaiting()).decode(errors="ignore")
-                sms_count = sms_response.count("+CMGL:")
-                ser.close()
-
+                sms_count = get_sms_count()
                 logging.info(f"Total SMS count: {sms_count}")
                 if sms_count >= SMS_LIMIT:
                     delete_all_sms()
@@ -483,6 +477,42 @@ def main():
             logging.error(f"Main loop error: {e}")
             display_message("Error dalam proses SMS")
             time.sleep(10)
+
+
+def get_sms_count():
+    """Get accurate SMS count from modem"""
+    try:
+        ser = serial.Serial(PORT, BAUDRATE, timeout=1)
+        ser.write(b'AT+CMGL="ALL"\r')
+
+        # Membaca response secara bertahap
+        response = bytearray()
+        start_time = time.time()
+        while time.time() - start_time < 5:  # Timeout 5 detik
+            if ser.in_waiting > 0:
+                data = ser.read(ser.in_waiting)
+                response.extend(data)
+                start_time = time.time()  # Reset timer jika masih ada data
+            else:
+                time.sleep(0.1)
+
+        decoded_response = response.decode(errors="ignore")
+
+        # Menghitung jumlah SMS yang valid
+        sms_count = 0
+        for line in decoded_response.split("\r\n"):
+            if line.startswith("+CMGL:"):
+                sms_count += 1
+
+        logging.info(f"Raw modem response: {decoded_response}")
+        return sms_count
+
+    except Exception as e:
+        logging.error(f"SMS count error: {e}")
+        return 0
+    finally:
+        if "ser" in locals() and ser.is_open:
+            ser.close()
 
 
 if __name__ == "__main__":
