@@ -10,7 +10,7 @@ import time
 import re
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib3
 import Adafruit_SSD1306
 import textwrap
@@ -225,6 +225,8 @@ def convert_timestamp(raw_timestamp):
 
         # Parse string ke datetime
         dt = datetime.strptime(no_timezone, "%y/%m/%d,%H:%M:%S")
+
+        dt += timedelta(hours=1)
 
         # Format jadi string yang diinginkan
         return dt.strftime("%Y-%m-%d %H:%M:%S")

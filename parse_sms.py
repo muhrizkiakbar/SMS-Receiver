@@ -1,6 +1,6 @@
 # parse_sms.py
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 import logging
 
@@ -53,6 +53,9 @@ def convert_timestamp(raw_timestamp):
 
         # Parse string ke datetime
         dt = datetime.strptime(no_timezone, "%y/%m/%d,%H:%M:%S")
+
+        # Tambah 1 jam
+        dt += timedelta(hours=1)
 
         # Format jadi string yang diinginkan
         return dt.strftime("%Y-%m-%d %H:%M:%S")

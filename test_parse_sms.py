@@ -65,19 +65,19 @@ AIN3:80.90,Normal;
         self.assertEqual(len(result), 4)
 
         self.assertEqual(result[0]["phone_number"], "+628115010759")
-        self.assertEqual(result[0]["timestamp"], "2025-04-29 07:57:31")
+        self.assertEqual(result[0]["timestamp"], "2025-04-29 08:57:31")
         self.assertIn("AIN0", result[1]["message"])
 
         self.assertEqual(result[1]["phone_number"], "+628115113510")
-        self.assertEqual(result[1]["timestamp"], "2025-04-29 08:00:42")
+        self.assertEqual(result[1]["timestamp"], "2025-04-29 09:00:42")
         self.assertIn("AIN0", result[1]["message"])
 
         self.assertEqual(result[2]["phone_number"], "+6282213735684")
-        self.assertEqual(result[2]["timestamp"], "2025-04-29 08:07:30")
+        self.assertEqual(result[2]["timestamp"], "2025-04-29 09:07:30")
         self.assertIn("AIN0", result[3]["message"])
 
         self.assertEqual(result[3]["phone_number"], "+628115113503")
-        self.assertEqual(result[3]["timestamp"], "2025-04-29 08:14:18")
+        self.assertEqual(result[3]["timestamp"], "2025-04-29 09:14:18")
         self.assertIn("AIN0", result[3]["message"])
 
     def test_parse_sms_empty(self):
