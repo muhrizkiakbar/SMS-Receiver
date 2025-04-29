@@ -4,6 +4,7 @@ import Adafruit_GPIO.Platform as Platform
 
 Platform.platform_detect = lambda: Platform.RASPBERRY_PI
 
+import shutil
 import requests
 import serial
 import time
@@ -54,6 +55,9 @@ font = ImageFont.truetype(font_path, 11)
 def initialize_directories():
     """Ensure necessary directories exist"""
     os.makedirs(SMS_STORAGE_PATH, exist_ok=True)
+    os.makedirs(
+        os.path.join(SMS_STORAGE_PATH, "sended"), exist_ok=True
+    )  # Folder untuk SMS terkirim
     logging.info(f"Initialized directory: {SMS_STORAGE_PATH}")
 
 
@@ -350,9 +354,15 @@ def send_telemetry(access_token, phone_number, sensor_data, filename, sent_at):
         )
 
         if response.status_code == 200:
+            logging.info("===========================================")
             logging.info(f"Data sent successfully for {phone_number}")
+            logging.info("===========================================")
             display_message(f"Data berhasil dikirim {phone_number}")
-            os.remove(filename)
+            dest_path = os.path.join(
+                SMS_STORAGE_PATH, "sended", os.path.basename(filename)
+            )
+            shutil.move(filename, dest_path)
+            logging.info(f"SMS dipindahkan ke: {dest_path}")
             return True
         else:
             logging.error(f"Telemetry send error: {response.text}")
@@ -432,6 +442,8 @@ def main():
 
                 sms_data = read_sms()
                 parsed_sms_list = parse_sms(sms_data)
+
+                logging.info("Reading new SMS from modem...")
 
                 for sms in parsed_sms_list:
                     if sms["phone_number"] == "+628115013798":
