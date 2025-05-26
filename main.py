@@ -33,8 +33,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configuration Constants
 LOCK_FILE_PATH = "/tmp/sms_gateway.lock"
-LOGIN_URL = "https://www.telemetry-adaro.id/api/login"
-TELEMETRY_URL = "https://www.telemetry-adaro.id/api/telemetry"
+LOGIN_URL = "https://telemetry-adaro.id/api/login"
+TELEMETRY_URL = "https://telemetry-adaro.id/api/telemetry"
 USERNAME = "sms_adaro"
 PASSWORD = "sms_adaro"
 PORT = "/dev/ttyUSB0"  # Adjust according to your modem's port
@@ -103,7 +103,7 @@ def check_internet_connection(timeout=5):
     """Check internet connectivity"""
     try:
         headers = {"Accept": "application/json"}
-        requests.get("https://www.telemetry-adaro.id", headers=headers, timeout=timeout)
+        requests.get("https://telemetry-adaro.id", headers=headers, timeout=timeout)
         return True
     except (requests.ConnectionError, requests.Timeout) as e:
         logging.warning(f"Internet Connection Error: {e}")
