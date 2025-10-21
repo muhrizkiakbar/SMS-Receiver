@@ -281,6 +281,7 @@ def extract_sensor_data(message, mode):
         "solar_radiation": 0,
         "evaporation": 0,
         "dissolve_oxygen": 0,
+        "water_volume": 0,
     }
 
     ain_values = re.findall(r"AIN(\d+):([\d.]+)", message)
