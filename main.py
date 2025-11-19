@@ -18,6 +18,9 @@ import textwrap
 from PIL import Image, ImageDraw, ImageFont
 import fcntl
 import sys
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configure logging
 logging.basicConfig(
