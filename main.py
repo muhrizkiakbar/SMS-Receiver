@@ -452,7 +452,7 @@ def main():
                 for sms in parsed_sms_list:
                     if sms["phone_number"] == "+628115013798":
                         sensor_data = extract_sensor_data(sms["message"], "climatology")
-                    elif sms["phone_number"] == "+6282155324265":
+                    elif sms["phone_number"] == "+6282195431503":
                         sensor_data = extract_sensor_data(sms["message"], "floating_hd")
                     else:
                         sensor_data = extract_sensor_data(sms["message"], "spas")
